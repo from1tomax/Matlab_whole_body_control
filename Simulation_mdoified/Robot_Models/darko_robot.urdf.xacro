@@ -1,0 +1,341 @@
+<?xml version="1.0"?>
+
+<!-- This config is based upon: summit_xl_description/robots/summit_xls_std.urdf -->
+<robot name="summit_xl" xmlns:xacro="http://wiki.ros.org/xacro">
+
+    <!-- ***************** -->
+    <!-- Imported elements -->
+    <!-- ***************** -->
+
+    <!-- First we import all possible elements defined in the urdf.xacro files. All these elements are defined as macro:xacros -->
+
+    <!-- Import summit XL base elements -->
+    <!--<xacro:include filename="$(find summit_xl_description)/urdf/bases/summit_xls_base.urdf.xacro" />-->
+    <xacro:include filename="$(find darko_description)/urdf/summit_xlsk_base_oem.urdf.xacro" />
+
+    <!-- Import summit XL wheels -->
+    <xacro:include filename="$(find summit_xl_description)/urdf/wheels/omni_wheel.urdf.xacro" />
+    <xacro:include filename="$(find summit_xl_description)/urdf/wheels/rubber_wheel.urdf.xacro" />
+    <xacro:include filename="$(find summit_xl_description)/urdf/structures/structure_hokuyo.urdf.xacro" />
+    <xacro:include filename="$(find summit_xl_description)/urdf/structures/sick_microscan3_support.urdf.xacro" />
+
+    <!-- Import all available sensors -->
+    <xacro:include filename="$(find robotnik_sensors)/urdf/all_sensors.urdf.xacro" />
+    <xacro:include filename="$(find darko_description)/urdf/sensor_kinect4a.urdf.xacro" />
+    <xacro:include filename="$(find darko_description)/urdf/sensor_basler_ace.urdf.xacro" />
+    <xacro:include filename="$(find darko_description)/urdf/sensor_ouster0.urdf.xacro" />
+
+    <xacro:include filename="$(find darko_description)/urdf/telescopic_pole.urdf.xacro" />
+    <xacro:include filename="$(find darko_description)/urdf/pantilt.urdf.xacro" />
+
+    <!-- Gripper -->
+    <!--<xacro:include filename="$(find darko_description)/urdf/dh3.urdf.xacro" />-->
+    
+    <!-- Import DARKO mounting structure and other items -->
+    <!-- NOTE: For models exported from Blender to show up in Gazebo, you need to remove all "transparent" tags from the DAE file -->
+    <xacro:include filename="$(find darko_description)/urdf/mounting_platform.urdf.xacro" />
+    <xacro:include filename="$(find darko_description)/urdf/lidar_tower.urdf.xacro" />
+    <xacro:include filename="$(find darko_description)/urdf/panda_controller.urdf.xacro" />
+    <xacro:include filename="$(find darko_description)/urdf/panda_arm.urdf.xacro" />
+    <xacro:include filename="$(find darko_description)/urdf/nao_robot.urdf.xacro" />
+    <xacro:include filename="$(find darko_description)/urdf/projector.urdf.xacro" />
+    <xacro:include filename="$(find darko_description)/urdf/wireless_estop_receiver.urdf.xacro" />
+    <xacro:include filename="$(find darko_description)/urdf/mini_gaming_pc.urdf.xacro" />
+    <xacro:include filename="$(find darko_description)/urdf/xavier_agx_dk.urdf.xacro" />
+
+
+    <xacro:property name="PI" value="3.1415926535897931"/>
+
+    <!-- Wheel parameters -->
+    <!-- x,y,z in translation from base_link to the center of the wheel -->
+    <xacro:property name="wheel_offset_x" value="0.2225" />
+    <xacro:property name="wheel_offset_y" value="0.2675" />
+    <xacro:property name="wheel_offset_z" value="0.0" />
+
+    <xacro:property name="front_laser_offset_x" value="0.2865"/>
+    <xacro:property name="front_laser_offset_y" value="-0.20894"/>
+    <xacro:property name="front_laser_offset_z" value="0.2973"/>
+
+    <xacro:property name="rear_laser_offset_x" value="-0.2865"/>
+    <xacro:property name="rear_laser_offset_y" value="0.20894"/>
+    <xacro:property name="rear_laser_offset_z" value="0.2973"/>
+
+    <xacro:property name="imu_offset_x" value="0.127"/>
+    <xacro:property name="imu_offset_y" value="-0.129"/>
+    <xacro:property name="imu_offset_z" value="0.212"/>
+
+    <xacro:property name="front_rgbd_camera_offset_x" value="0.35850"/>
+    <xacro:property name="front_rgbd_camera_offset_y" value="0.0"/>
+    <xacro:property name="front_rgbd_camera_offset_z" value="0.25062"/>
+
+    <!-- TODO: Likely not needed -->
+    <xacro:property name="gps_offset_x" value="-0.365"/>
+    <xacro:property name="gps_offset_y" value="-0.167"/>
+    <xacro:property name="gps_offset_z" value="0.302"/>
+
+    <!-- LEFT POLE WITH THE OUSTER LIDAR -->
+    <!-- Possible Xs -->
+    <!-- 
+        0.31775; 0.30775; 0.29775; 0.28775; 0.27775; 
+        0.26775; 0.25775; 0.24775; 0.23775; 0.22775;
+        0.22775; 0.21775; 0.20775; 0.19775; 0.18775;
+        0.17775; 0.16775; 0.15775; 0.14775; 0.13775;
+    -->
+    <xacro:property name="lidar_pole_offset_x" value="0.23775"/> <!-- Check -->
+    <xacro:property name="lidar_pole_offset_y" value="0.2933"/>
+    <xacro:property name="lidar_pole_offset_z" value="0.42762"/>
+    <xacro:property name="lidar_pole_offset_roll" value="0.0"/>
+    <xacro:property name="lidar_pole_offset_pitch" value="0.0"/>
+    <xacro:property name="lidar_pole_offset_yaw" value="3.14"/>
+    <!-- Referred to left (lidar) pole-->
+    <!-- Possible Zs -->
+    <!-- 
+        0.200; 0.180; 0.160; 0.140; 0.120; 0.100;  
+        0.080; 0.060; 0.040; 0.020; 0.000;  
+    -->
+    <xacro:property name="lidar_pole_sup_offset_z" value="0.0"/>
+
+    <!-- RIGHT POLE WITH THE TWO KINECT FOR AZURE AND PAN-TILT UNIT -->
+    <!-- Possible Xs -->
+    <!-- 
+        0.31775; 0.30775; 0.29775; 0.28775; 0.27775; 
+        0.26775; 0.25775; 0.24775; 0.23775; 0.22775;
+        0.22775; 0.21775; 0.20775; 0.19775; 0.18775;
+        0.17775; 0.16775; 0.15775; 0.14775; 0.13775;
+    -->
+    <xacro:property name="k4a_pole_offset_x" value="0.23775"/> <!-- Check -->
+    <xacro:property name="k4a_pole_offset_y" value="-0.2933"/>
+    <xacro:property name="k4a_pole_offset_z" value="0.42762"/>
+    <xacro:property name="k4a_pole_offset_roll" value="0.0"/>
+    <xacro:property name="k4a_pole_offset_pitch" value="0.0"/>
+    <xacro:property name="k4a_pole_offset_yaw" value="0.0"/>
+    <!-- Referred to left (lidar) pole-->
+    <!-- 
+        0.200; 0.180; 0.160; 0.140; 0.120; 0.100;  
+        0.080; 0.060; 0.040; 0.020; 0.000;  
+    -->
+    <xacro:property name="k4a_pole_sup_offset_z" value="0.0"/>
+
+    <!-- BASLER 1 --> :
+    <!-- Referred to left pole sup-->
+    <xacro:property name="fisheye_rear_offset_x" value="0.0"/>
+    <xacro:property name="fisheye_rear_offset_y" value="0.027"/> <!-- corrected from 0.026 to avoid moveit collision/ -->
+
+    <!-- Possible Zs -->
+    <xacro:property name="fisheye_rear_offset_z" value="0.285"/>
+    <xacro:property name="fisheye_rear_offset_roll" value="0.0"/>
+    <xacro:property name="fisheye_rear_offset_pitch" value="0.0"/>
+    <xacro:property name="fisheye_rear_offset_yaw" value="0.0"/>
+
+    <!-- BASLER 2 -->
+    <!-- Referred to left pole sup -->
+    <xacro:property name="fisheye_front_offset_x" value="0.0"/>
+    <xacro:property name="fisheye_front_offset_y" value="-0.027060"/> <!-- corrected from -0.027 to avoid moveit collision/ -->
+    <!-- Possible Zs -->
+    <xacro:property name="fisheye_front_offset_z" value="0.285"/>
+    <xacro:property name="fisheye_front_offset_roll" value="0.0"/>
+    <xacro:property name="fisheye_front_offset_pitch" value="0.0"/>
+    <xacro:property name="fisheye_front_offset_yaw" value="3.14"/>
+
+    <!-- Ouster -->
+    <!-- Referred to left pole sup -->
+    <xacro:property name="lidar_top_offset_x" value="0.0"/> <!-- Check -->
+    <xacro:property name="lidar_top_offset_y" value="0.0"/> <!-- Check -->
+    <xacro:property name="lidar_top_offset_z" value="0.4133"/>
+    <xacro:property name="lidar_top_offset_roll" value="0.0"/>
+    <xacro:property name="lidar_top_offset_pitch" value="0.0"/>
+    <xacro:property name="lidar_top_offset_yaw" value="0.0"/>
+
+    <!-- KINECT 1 -->
+    <!-- Referred to right pole sup -->
+    <xacro:property name="k4a_bottom_offset_x" value="0.069"/>
+    <!--xacro:property name="k4a_bottom_offset_y" value="0.025"/-->
+    <xacro:property name="k4a_bottom_offset_y" value="0.085"/>
+    <!-- Possible Zs -->
+    <!--xacro:property name="k4a_bottom_offset_z" value="0.259"/--> 
+    <xacro:property name="k4a_bottom_offset_z" value="0.264"/> 
+    <xacro:property name="k4a_bottom_offset_roll" value="0.0"/>
+    <xacro:property name="k4a_bottom_offset_pitch" value="0.0"/>
+    <xacro:property name="k4a_bottom_offset_yaw" value="1.57"/> <!-- Check -->
+
+    <!-- KINECT 2 -->
+    <!-- Referred to pantilt -->
+    <!--xacro:property name="k4a_top_offset_x" value="0.0175"/-->
+    <xacro:property name="k4a_top_offset_x" value="0.0775"/>
+    <xacro:property name="k4a_top_offset_y" value="0.0"/>
+    <!--xacro:property name="k4a_top_offset_z" value="0.0425"/-->
+    <xacro:property name="k4a_top_offset_z" value="0.0475"/>
+    <xacro:property name="k4a_top_offset_roll" value="0.0"/>
+    <xacro:property name="k4a_top_offset_pitch" value="0.0"/>
+    <xacro:property name="k4a_top_offset_yaw" value="0.0"/>
+
+    <!-- PAN TILT -->
+    <!-- Referred to right pole sup -->
+    <xacro:property name="pantilt_offset_x" value="0.0"/> <!-- Check -->
+    <xacro:property name="pantilt_offset_y" value="0.0"/> <!-- Check -->
+    <xacro:property name="pantilt_offset_z" value="0.3833"/>
+    <xacro:property name="pantilt_offset_roll" value="0.04"/>
+    <xacro:property name="pantilt_offset_pitch" value="0.12"/>
+    <xacro:property name="pantilt_offset_yaw" value="3.21159"/>
+
+    <!-- Flag to select the high or low quality model -->
+    <xacro:property name="hq" value="true" />
+
+    <xacro:arg name="prefix" default="darko/"/>
+    <xacro:arg name="ros_planar_move_plugin" default="false"/>
+    <xacro:arg name="enable_arm" default="false"/>
+    <xacro:arg name="gpu" default="false"/>
+
+
+    <xacro:macro name="summit_xl" params="prefix publish_bf hq">
+
+        <!-- *************** -->
+        <!-- Robots Elements -->
+        <!-- *************** -->
+
+        <!-- Here we create the robot elements using the xacro:macros imported at the beggining of this file -->
+
+        <!-- Summit XL base -->
+        <xacro:summit_xls_base prefix="$(arg prefix)" publish_bf="true" hq="${hq}" />
+
+        <xacro:omni_wheel prefix="$(arg prefix)front_right" parent="$(arg prefix)base_link" reflect="false" hq="${hq}">
+            <origin xyz="${wheel_offset_x} -${wheel_offset_y} ${wheel_offset_z}" rpy="0 0 0"/>
+        </xacro:omni_wheel>
+
+        <xacro:omni_wheel prefix="$(arg prefix)front_left" parent="$(arg prefix)base_link" reflect="true" hq="${hq}">
+            <origin xyz="${wheel_offset_x} ${wheel_offset_y} ${wheel_offset_z}" rpy="0 0 0"/>
+        </xacro:omni_wheel>
+
+        <xacro:omni_wheel prefix="$(arg prefix)back_left" parent="$(arg prefix)base_link" reflect="true" hq="${hq}">
+            <origin xyz="-${wheel_offset_x} ${wheel_offset_y} ${wheel_offset_z}" rpy="0 0 0"/>
+        </xacro:omni_wheel>
+
+        <xacro:omni_wheel prefix="$(arg prefix)back_right" parent="$(arg prefix)base_link" reflect="false" hq="${hq}">
+            <origin xyz="-${wheel_offset_x} -${wheel_offset_y} ${wheel_offset_z}" rpy="0 0 0"/>
+        </xacro:omni_wheel>
+
+        <!-- IMU -->
+        <xacro:sensor_imu prefix="$(arg prefix)imu" parent="$(arg prefix)base_link">
+            <origin xyz="${imu_offset_x} ${imu_offset_y} ${imu_offset_z}" rpy="0 0 0"/>
+        </xacro:sensor_imu>
+
+        <!-- MOUNTING STRUCTURES -->
+
+        <!-- Mounting Platform, Bottom Level (0): attach to robot's base link -->
+        <joint name="$(arg prefix)platform_0_joint" type="fixed">
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <parent link="$(arg prefix)base_chapa"/>
+            <child link="$(arg prefix)platform_0_link" />
+        </joint>
+        <link name="$(arg prefix)platform_0_link"/>
+
+        <!-- SENSORS -->
+        <xacro:sick_microscan3_support prefix="$(arg prefix)front_laser" parent="$(arg prefix)base_link">
+            <origin xyz="${front_laser_offset_x} ${front_laser_offset_y} ${front_laser_offset_z-0.095}" rpy="0 0 ${3/4*PI-PI}" />
+        </xacro:sick_microscan3_support>
+         <xacro:sensor_sick_microscan3 prefix="$(arg prefix)front_laser" parent="$(arg prefix)front_laser_support_link" prefix_topic="front_laser" gpu="$(arg gpu)">
+            <origin xyz="0.16 0 -0.04" rpy="${PI} 0 0" />
+        </xacro:sensor_sick_microscan3>
+
+        <xacro:sick_microscan3_support prefix="$(arg prefix)rear_laser" parent="$(arg prefix)base_link">
+            <origin xyz="${rear_laser_offset_x} ${rear_laser_offset_y} ${rear_laser_offset_z-0.095}" rpy="0 0 ${3/4*PI}" />
+        </xacro:sick_microscan3_support>
+         <xacro:sensor_sick_microscan3 prefix="$(arg prefix)rear_laser" parent="$(arg prefix)rear_laser_support_link" prefix_topic="rear_laser" gpu="$(arg gpu)">
+            <origin xyz="0.16 0 -0.04" rpy="${PI} 0 0" />
+        </xacro:sensor_sick_microscan3>
+
+        <!-- Ouster lidar: attach to lidar pole -->
+        <xacro:sensor_ouster0 prefix="$(arg prefix)ouster" parent="$(arg prefix)lidar_pole_sup_link" prefix_topic="ouster" gpu="$(arg gpu)" range_min="0.25" range_max="30.0" hfov="360.0" hsamples="512" vfov="90.0" vsamples="128" fps="10">
+            <origin xyz="${lidar_top_offset_x} ${lidar_top_offset_y} ${lidar_top_offset_z}" 
+                rpy="${lidar_top_offset_roll} ${lidar_top_offset_pitch} ${lidar_top_offset_yaw}" />
+        </xacro:sensor_ouster0>
+        
+        <xacro:telescopic_pole prefix="$(arg prefix)lidar_pole" parent="$(arg prefix)base_link" pole_height="${lidar_pole_sup_offset_z}">
+            <origin xyz="${lidar_pole_offset_x} ${lidar_pole_offset_y} ${lidar_pole_offset_z}" 
+                rpy="${lidar_pole_offset_roll} ${lidar_pole_offset_pitch} ${lidar_pole_offset_yaw}"/>
+        </xacro:telescopic_pole>
+
+        <!-- Basler color cameras with fisheye lens, part of omni-cam: attach below lidar -->
+        <xacro:sensor_basler_ace prefix="$(arg prefix)fisheye_rear" parent="$(arg prefix)lidar_pole_sup_link" prefix_topic="fisheye_rear">
+            <origin xyz="${fisheye_rear_offset_x} ${fisheye_rear_offset_y} ${fisheye_rear_offset_z}" 
+              rpy="${fisheye_rear_offset_roll} ${fisheye_rear_offset_pitch} ${fisheye_rear_offset_yaw}" />
+        </xacro:sensor_basler_ace>
+        <xacro:sensor_basler_ace prefix="$(arg prefix)fisheye_front" parent="$(arg prefix)lidar_pole_sup_link" prefix_topic="fisheye_front">
+            <origin xyz="${fisheye_front_offset_x} ${fisheye_front_offset_y} ${fisheye_front_offset_z}" 
+              rpy="${fisheye_front_offset_roll} ${fisheye_front_offset_pitch} ${fisheye_front_offset_yaw}" />
+        </xacro:sensor_basler_ace>
+
+        <!-- K4A pole on shelf-facing corner -->
+        <xacro:telescopic_pole prefix="$(arg prefix)k4a_pole" parent="$(arg prefix)base_link" pole_height="${k4a_pole_sup_offset_z}">
+            <origin xyz="${k4a_pole_offset_x} ${k4a_pole_offset_y} ${k4a_pole_offset_z}" 
+                rpy="${k4a_pole_offset_roll} ${k4a_pole_offset_pitch} ${k4a_pole_offset_yaw}"/>
+        </xacro:telescopic_pole>
+
+        <!-- Pan-tilt unit on K4A pole -->
+        <xacro:pantilt prefix="$(arg prefix)pantilt" parent="$(arg prefix)k4a_pole_sup_link">
+            <origin xyz="${pantilt_offset_x} ${pantilt_offset_y} ${pantilt_offset_z}" 
+                rpy="${pantilt_offset_roll} ${pantilt_offset_pitch} ${pantilt_offset_yaw}" />
+        </xacro:pantilt>
+
+        <!-- Bottom Kinect4A looking sideways sensor (WFOV mode) -->
+        <xacro:sensor_kinect4a prefix="$(arg prefix)k4a_bottom" parent="$(arg prefix)k4a_pole_sup_link" prefix_topic="k4a_bottom" wfov="true">
+            <origin xyz="${k4a_bottom_offset_x} ${k4a_bottom_offset_y} ${k4a_bottom_offset_z}" 
+              rpy="${k4a_bottom_offset_roll} ${k4a_bottom_offset_pitch} ${k4a_bottom_offset_yaw}" />
+        </xacro:sensor_kinect4a>
+
+        <!-- Top Kinect4A on PTU (NFOV mode) -->
+        <xacro:sensor_kinect4a prefix="$(arg prefix)k4a_top" parent="$(arg prefix)pantilt_tilt_link" prefix_topic="k4a_top" wfov="false">
+            <origin xyz="${k4a_top_offset_x} ${k4a_top_offset_y} ${k4a_top_offset_z}" 
+              rpy="${k4a_top_offset_roll} ${k4a_top_offset_pitch} ${k4a_top_offset_yaw}" />
+        </xacro:sensor_kinect4a>
+
+        <!-- TODO: The following lines were included in the original Robotnik config, and are probably obsolete. -->
+        <!--xacro:sensor_axis_m5013 prefix="$(arg prefix)front_ptz_camera" parent="$(arg prefix)base_link">
+            <origin xyz="${front_ptz_camera_offset_x} ${front_ptz_camera_offset_y} ${front_ptz_camera_offset_z}" rpy="${-PI/2} 0 0"/>
+        </xacro:sensor_axis_m5013-->
+
+        <!--xacro:sensor_axis_m5013 prefix="$(arg prefix)rear_ptz_camera" parent="$(arg prefix)base_link">
+            <origin xyz="${rear_ptz_camera_offset_x} ${rear_ptz_camera_offset_y} ${rear_ptz_camera_offset_z}" rpy="${-PI/2} 0 ${PI}"/>
+        </xacro:sensor_axis_m5013-->
+        
+        <xacro:sensor_orbbec_astra prefix="$(arg prefix)front_rgbd_camera" parent="$(arg prefix)base_link" prefix_topic="front_rgbd_camera">
+            <origin xyz="${front_rgbd_camera_offset_x} ${front_rgbd_camera_offset_y} ${front_rgbd_camera_offset_z}" rpy="0 0 0"/>
+        </xacro:sensor_orbbec_astra>
+
+        <!-- ARM AND CONTROLLER -->
+
+        <!-- Add Franka arm from panda_simulation -->
+        <joint name="$(arg prefix)panda_mount_joint" type="fixed">
+            <origin xyz="-0.24 -0.15 0.0" rpy="0 0 3.1415926" />
+            <parent link="$(arg prefix)platform_0_link"/>
+            <child link="$(arg prefix)panda_mount_link" />
+        </joint>
+        <link name="$(arg prefix)panda_mount_link"/>
+        
+        <xacro:if value="$(arg enable_arm)">
+            <xacro:darko_panda_arm load_gazebo="true" connected_to="$(arg prefix)panda_mount_link" load_gripper="true" use_gazebo_control="true"/>
+        </xacro:if>
+
+        <!-- NAO AND PROJECTOR -->
+
+        <xacro:darko_nao_robot prefix="$(arg prefix)nao" parent="$(arg prefix)platform_0_link" sitting="true">
+            <origin xyz="0.35 0 0.01" rpy="0 0 0" />
+        </xacro:darko_nao_robot>
+
+        <xacro:darko_projector prefix="$(arg prefix)projector" parent="$(arg prefix)platform_0_link">
+            <origin xyz="0.38 0 -0.17" rpy="0 1.571 0" />
+        </xacro:darko_projector>
+
+    </xacro:macro>
+
+    <!-- Disabled because Panda simulator introduces its own, extended version of ros_control -->
+    <!-- <xacro:ros_control/> -->
+
+    <xacro:if value="$(arg ros_planar_move_plugin)">
+        <xacro:omni_steering prefix="$(arg prefix)" publish_tf="true"/>
+    </xacro:if>
+
+    <xacro:summit_xl prefix="$(arg prefix)" publish_bf="true" hq="true"/>
+
+
+</robot>
